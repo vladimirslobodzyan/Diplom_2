@@ -1,3 +1,8 @@
+import api.client.OrderClient;
+import api.client.UserClient;
+import api.model.Order;
+import api.model.User;
+import api.util.UserGenerator;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
@@ -6,9 +11,10 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.apache.http.HttpStatus.*;
-
-import static org.junit.Assert.*;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class GetOrderTest {
 
@@ -18,14 +24,13 @@ public class GetOrderTest {
     private List<String> ingredients;
     private Order order;
 
-    private  OrderClient orderClient;
+    private OrderClient orderClient;
     private ValidatableResponse response;
-
 
 
     @Before
     public void setUp() {
-        user = UserGenerator.getDefaultUser();;
+        user = UserGenerator.getDefaultUser();
         userClient = new UserClient();
         orderClient = new OrderClient();
         accessToken = userClient.createUser(user)

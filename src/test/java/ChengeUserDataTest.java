@@ -1,10 +1,15 @@
+import api.client.UserClient;
+import api.model.User;
+import api.model.UserLogin;
+import api.util.UserGenerator;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.http.HttpStatus.*;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -12,11 +17,10 @@ public class ChengeUserDataTest {
     private User user;
     private User updateUser;
     private UserClient userClient;
-   private ValidatableResponse response;
+    private ValidatableResponse response;
     private UserLogin userData;
 
     private String accessToken;
-
 
 
     @Before
@@ -29,7 +33,7 @@ public class ChengeUserDataTest {
     }
 
     @After
-    public void cleanUp(){
+    public void cleanUp() {
         String accessToken = response.extract().path("accessToken");
         if (accessToken != null) {
             userClient.deleteUser(accessToken);
@@ -37,8 +41,8 @@ public class ChengeUserDataTest {
     }
 
     @Test
-    @DisplayName("User update with authorization")
-    public void  userUpdateWithAuth() {
+    @DisplayName("api.model.User update with authorization")
+    public void userUpdateWithAuth() {
         userClient.createUser(user);
         accessToken = response.extract().path("accessToken");
         ValidatableResponse newResponse = userClient.updateUser(accessToken, userData);
@@ -47,9 +51,10 @@ public class ChengeUserDataTest {
         assertEquals(SC_OK, statusCode);
         assertTrue(messageResponse);
     }
+
     @Test
-    @DisplayName("User update without authorization")
-    public void  userUpdateWithOutAuth() {
+    @DisplayName("api.model.User update without authorization")
+    public void userUpdateWithOutAuth() {
         userClient.createUser(user);
         accessToken = response.extract().path("accessToken");
         ValidatableResponse newResponse = userClient.updateUser("", userData);
